@@ -27,4 +27,4 @@ class Review(models.Model):
     book = models.ForeignKey(Book,on_delete=models.DO_NOTHING,)
 
     def __str__(self):
-        return self.book.title + ' book review'
+        return self.book.title + ' books review'
