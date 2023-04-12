@@ -1,10 +1,16 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-# class User(AbstractUser):
-#     name = models.CharField(max_length=100)
-#     email = models.CharField(max_length=100)
 
+
+class User(AbstractUser):
+    name = models.CharField(max_length=255)
+    email = models.CharField(max_length=255,unique=True)
+    password = models.CharField(max_length=255)
+    username = models.CharField(max_length=255,unique=True,default="a")
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
 
 # Create your models here.
 class Category(models.Model):
@@ -29,7 +35,8 @@ class Review(models.Model):
     rating = models.IntegerField(choices=RATING_OPTIONS)
     comment = models.TextField()
     publication_date = models.DateField('published on:')
-    book = models.ForeignKey(Book,on_delete=models.DO_NOTHING,)
+    book = models.ForeignKey(Book,on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.book.title + ' book review'
