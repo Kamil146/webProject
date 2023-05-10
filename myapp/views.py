@@ -42,8 +42,8 @@ def register_user(request, format=None):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message': 'Register succesfull'},serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'message': 'Register unsuccesfull'},serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Register succesfull','data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Register unsuccessful', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def category_list(request,format=None):
@@ -119,7 +119,7 @@ def review_detail(request, id, format=None):
     if request.method == 'POST':
         try:
             book = Book.objects.get(pk=id)
-        except Review.DoesNotExist:
+        except Book.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         if request.user.is_authenticated:
             existing_review = Review.objects.filter(book=id, user=request.user)
@@ -141,7 +141,7 @@ def review_detail(request, id, format=None):
         return Response(serializer.data)
     elif request.method == 'PUT':
         if review.user == request.user:
-            serializer = ReviewSerializer(review, data=request.data,context={'request': request, 'flag': True})
+            serializer = ReviewSerializer(review, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
