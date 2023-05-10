@@ -16,19 +16,18 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = ['id', 'title', 'author', 'publisher', 'summary', 'category']
 
-# class ReviewSerializerAdd(serializers.ModelSerializer):
-#     book_title = serializers.CharField(source='book.title', read_only=True)
-#     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-#     class Meta:
-#         model = Review
-#         fields = ['id', 'rating', 'comment', 'publication_date', 'book_title', 'user']
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     book_title = serializers.CharField(source='book.title', read_only=True)
     user_name =  serializers.CharField(source='user.username',read_only=True)
+
     class Meta:
         model = Review
         fields = ['id', 'rating', 'comment', 'publication_date', 'book_title','user_name']
+
+
+
 
 
 

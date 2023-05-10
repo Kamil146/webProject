@@ -34,7 +34,7 @@ class Review(models.Model):
     RATING_OPTIONS=((1,1),(2,2),(3,3),(4,4),(5,5),(6,6))
     rating = models.IntegerField(choices=RATING_OPTIONS)
     comment = models.TextField()
-    publication_date = models.DateField('published on:')
+    publication_date = models.DateField('published on:', auto_now=True)
     book = models.ForeignKey(Book,on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User,on_delete=models.DO_NOTHING)
 
