@@ -56,6 +56,14 @@ def category_list(request,format=None):
 def books_list(request, format=None):
     if request.method == 'GET':
         books = Book.objects.all()
+        search = request.query_params.get('search', '')
+        category = request.query_params.get('category', '')
+        if search:
+            title_q = Q(title__icontains=search)
+            author_q = Q(author__icontains=search)
+            books = books.filter(title_q | author_q)
+        if category:
+            books = books.filter(category__name__icontains=category)
         serializer = BookSerializerSmall(books, many=True)
         return Response(serializer.data)
     if request.method == 'POST':
@@ -72,17 +80,7 @@ def review_list(request, format=None):
         reviews = Review.objects.all()
         serializer = ReviewSerializerSmall(reviews, many=True)
         return Response(serializer.data)
-    # elif request.method == 'POST':
-    #     book_title = request.data.get('book_title')
-    #     serializer = ReviewSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         try:
-    #             book = Book.objects.get(title=book_title)
-    #         except Book.DoesNotExist:
-    #             return Response({'error': 'Book does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    #         serializer.save(book=book)
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -153,16 +151,3 @@ def review_detail(request, id, format=None):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({'error': 'You can only delete your reviews'},status=status.HTTP_401_UNAUTHORIZED)
 
-@api_view(['GET'])
-def search_book(request):
-    queryset = Book.objects.all()
-    search = request.query_params.get('search', '')
-    category = request.query_params.get('category', '')
-    if search:
-        title_q = Q(title__icontains=search)
-        author_q = Q(author__icontains=search)
-        queryset = queryset.filter(title_q | author_q)
-    if category:
-        queryset = queryset.filter(category__name__icontains=category)
-    serializer = BookSerializerSmall(queryset, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
