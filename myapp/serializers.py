@@ -9,7 +9,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class BookSerializerSmall(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['id','title', 'author']
+        fields = ['id','title', 'author','category']
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,15 +21,9 @@ class BookSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     book_title = serializers.CharField(source='book.title', read_only=True)
     user_name =  serializers.CharField(source='user.username',read_only=True)
-
     class Meta:
         model = Review
         fields = ['id', 'rating', 'comment', 'publication_date', 'book_title','user_name']
-
-
-
-
-
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

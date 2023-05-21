@@ -87,7 +87,7 @@ def review_list(request, format=None):
 
 
 
-@api_view(['GET', 'PUT', 'DELETE','POST'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def book_detail(request, id, format=None):
     try:
         book = Book.objects.get(pk=id)
@@ -156,11 +156,13 @@ def review_detail(request, id, format=None):
 @api_view(['GET'])
 def search_book(request):
     queryset = Book.objects.all()
-    query = request.query_params.get('query', '')
-    if query:
-        q = Q()
-        for field in ['title', 'author']:
-            q |= Q(**{f"{field}__icontains": query})
-        queryset = queryset.filter(q)
+    search = request.query_params.get('search', '')
+    category = request.query_params.get('category', '')
+    if search:
+        title_q = Q(title__icontains=search)
+        author_q = Q(author__icontains=search)
+        queryset = queryset.filter(title_q | author_q)
+    if category:
+        queryset = queryset.filter(category__name__icontains=category)
     serializer = BookSerializerSmall(queryset, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
