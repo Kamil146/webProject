@@ -7,21 +7,19 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class BookSerializerSmall(serializers.ModelSerializer):
-    category = serializers.SerializerMethodField('get_category')
+    category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all(), many=True)
     class Meta:
         model = Book
         fields = ['id','title', 'author','category']
 
-    def get_category(self, obj):
-        return obj.category.values_list('name', flat=True)
+
 
 class BookSerializer(serializers.ModelSerializer):
-    category = serializers.SerializerMethodField('get_category')
+    category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all(), many=True)
     class Meta:
         model = Book
         fields = ['id', 'title', 'author', 'publisher', 'summary', 'category']
-    def get_category(self, obj):
-        return obj.category.values_list('name', flat=True)
+
 
 
 class ReviewSerializer(serializers.ModelSerializer):
