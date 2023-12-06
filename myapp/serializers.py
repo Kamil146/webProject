@@ -1,33 +1,37 @@
 from rest_framework import serializers
 from .models import Book, Review, User, Category
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
 
+
 class BookSerializerSmall(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all(), many=True)
+
     class Meta:
         model = Book
-        fields = ['id','title', 'author','category']
-
+        fields = ['id','isbn', 'title', 'author', 'category', 'average_rating']
 
 
 class BookSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(slug_field='name', queryset=Category.objects.all(), many=True)
+
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'publisher', 'summary', 'category']
-
+        fields = ['id','isbn', 'title', 'author', 'publisher', 'summary', 'category', 'average_rating']
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     book_title = serializers.CharField(source='book.title', read_only=True)
-    user_name =  serializers.CharField(source='user.username',read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = Review
-        fields = ['id', 'rating', 'comment', 'publication_date', 'book_title','user_name']
+        fields = ['id', 'rating', 'comment', 'publication_date', 'book_title', 'user_name']
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,9 +49,11 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class ReviewSerializerSmall(serializers.ModelSerializer):
-    book_title = serializers.CharField(source='book.title',read_only=True)
-    user_name =  serializers.CharField(source='user.username',read_only=True)
+    book_title = serializers.CharField(source='book.title', read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = Review
-        fields = [ 'id','rating', 'book_title','user_name']
+        fields = ['id', 'rating', 'book_title', 'user_name']

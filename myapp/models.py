@@ -23,12 +23,22 @@ class Category(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=100)
     author = models.CharField(max_length=100)
-    publisher = models.CharField(max_length=100)
-    summary = models.TextField()
+    publisher = models.CharField(max_length=100,blank=True)
+    isbn = models.CharField(max_length=13,unique=True)
+    summary = models.TextField(blank=True)
     category = models.ManyToManyField(Category)
-
+    average_rating = models.FloatField(default=0.0)
     def __str__(self):
         return self.title
+
+    def update_average_rating(self):
+        total_ratings = self.review_set.count()
+        if total_ratings > 0:
+            sum_ratings = sum([review.rating for review in self.review_set.all()])
+            self.average_rating = sum_ratings / total_ratings
+        else:
+            self.average_rating = 0.0
+        self.save()
 
 class Review(models.Model):
     RATING_OPTIONS=((1,1),(2,2),(3,3),(4,4),(5,5),(6,6))
