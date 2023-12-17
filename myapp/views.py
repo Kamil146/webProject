@@ -17,7 +17,6 @@ from django.contrib.auth import authenticate
 
 @api_view(['GET'])
 def create_book_from_isbn(request, isbn):
-    # Utwórz URL zapytania do Google Books API
     if len(str(isbn)) != 13:
         return Response({"error": "Incorrent length of ISBN"}, status=status.HTTP_404_NOT_FOUND)
     books = Book.objects.all()
@@ -25,10 +24,8 @@ def create_book_from_isbn(request, isbn):
     if books:
         return Response({"error": "Book with that ISBN already exists"}, status=status.HTTP_404_NOT_FOUND)
     data = get_book_info(isbn)
-    # Sprawdź, czy zapytanie zwróciło wyniki
     if data is None:
         return Response({"error": "No results for that ISBN"}, status=status.HTTP_404_NOT_FOUND)
-    # Pobierz informacje o pierwszym wyniku
     book_info = data['volumeInfo']
     summary = strip_tags(book_info.get('description', ''))
     category_names = book_info.get('categories', [])
@@ -43,7 +40,6 @@ def create_book_from_isbn(request, isbn):
         'category': categories,
         'average_rating': 0.0
     }
-    # Utwórz nową książkę
     book_serializer = BookSerializer(data=book_data)
     if book_serializer.is_valid():
         book_serializer.save()
@@ -108,10 +104,8 @@ def book_ratings(request, id):
         return JsonResponse({"error": "Book does not have ISBN "}, status=400)
     # Pobierz informacje o książce z API Google Books
     books_rating = get_book_rating(book.isbn, book)
-
     if not books_rating:
         return JsonResponse({"error": "Could not access books information"}, status=400)
-
     return Response(books_rating)
 
 
